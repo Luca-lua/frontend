@@ -1,0 +1,17 @@
+{
+  "departure": "JFK",
+  "arrival": "LAX",
+  "alternate": "EDDF",
+  "route": "DCT ABC DCT",
+  "altitude": 15000,
+  "formation_flight": true,
+  "formation_elements": 2,
+  "ifr_flight": false,
+  "departure_time": "2025-12-25 14:30:00",
+  "arrival_time": "2025-12-25 18:15:00",
+  "callsign": "FL123",
+  "type": "B737",
+  "squawk": 7500,
+  "fuel_reserve": 5000,
+  "remarks": "Test flight plan"
+}
