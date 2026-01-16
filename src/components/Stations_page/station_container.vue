@@ -3,10 +3,10 @@
         <button v-if="apt_counter_selection > 0" v-on:click="apt_counter_selection--" class="apt-previous"> < </button>
         <button v-if="apt_counter_selection < apt_data.length-1" v-on:click="apt_counter_selection++" class="apt-next"> > </button>
         <div class="station_container">
-            <VersionBar :version="version"/>
+            <VersionBar page="ATC Status" :version="version"/>
             <div v-for="apt in apt_data" :key="apt.code">
                 <div v-if="apt.id == apt_counter_selection" style="height: 60%" >
-                  <APTInfoPanel :name="apt.name" :code="apt.code" />
+                  <APTInfoPanel :name="apt.name" :code="apt.code" :positions="apt.positions" :state="apt.state" :qnh="apt.qnh" :rnw="apt.rnw" :metar="apt.metar" :misc="apt.misc" />
                 </div>
             </div>
         </div>
@@ -68,11 +68,12 @@
 
 .station_container {
   background-color: rgb(40, 50, 60);
-  height: 92vh;
+  height: 90%;
+  padding-bottom: 1%;
   margin-left: 7%;
   margin-right: 7%;
   border-radius: 2%;
-  float:none;
+  margin-bottom: 50%;
 }
 
 .apt_container {
@@ -88,8 +89,8 @@
 
 <script setup>
     import {ref} from "vue"
-    import VersionBar from "../VersionBar.vue";
-    import APTInfoPanel from "../APTInfo.vue"
+    import VersionBar from "../BackBox/VersionBar.vue";
+    import APTInfoPanel from "./APTInfo.vue"
     const apt_counter_selection = ref(0);
 
     const props = defineProps({

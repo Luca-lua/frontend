@@ -1,6 +1,6 @@
 <template>
     <v-card class="top_bar">
-        <label class="VersionLine"> ATC status <span class="VersionNumber">V{{ version }}</span> </label>
+        <label class="VersionLine"> {{ page }} <span class="VersionNumber">V{{ version }}</span> </label>
     </v-card>
 </template>
 
@@ -33,6 +33,7 @@
 
 <script setup>
     const props = defineProps({
+        page: Text,
         version: Number
     })
 </script>

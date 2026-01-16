@@ -1,13 +1,17 @@
 <script setup>
   import { ref } from 'vue'
   import { reactive } from 'vue'
-  import station_view from "@/components/station_container/station_container.vue"
+  import station_view from "@/components/Stations_page/station_container.vue"
+  import flt_view from "@/components/BackBox/flt_container.vue"
+  import file_view from "@/components/BackBox/file_container.vue"
 
   const version = ref(0.25);
 
+  const filing_command = ref('curl -v -X POST "http://127.0.0.1:5000/post-flightplan/TestUser" -H "Content-Type: application/json" -d @Data.json');
+
   const apt_data = reactive([
-    {id:0 ,code: "ETNW",name: "Wunstorf Airport",positions: {TWR: { active: true,freq: 123.4},GND: {active: false,freq: 243.5}},metar: "TEST"},
-    {id:1 ,code: "ETNL",name: "Laage Airport",positions: {TWR: {active: false,freq: 123.4},APR: {active: false,freq: 33.250}},metar: "TEST"},
+    {id:0 ,code: "ETNW",name: "Wunstorf Airport",positions: {TWR: {note:"TestNote" ,active: true ,user: "TestUser" ,emergency: false ,Freq: {freq1:'123.400',freq2:'322.250'}},GND: {note:"" ,active: false ,user: "TestUser" ,emergency: true ,Freq: {freq:'243.5'}}},rnw: 27 ,qnh: '29.29' ,state: "Test" ,metar: "TEST", misc: "-"},
+    {id:1 ,code: "ETNL",name: "Laage Airport",positions: {TWR: {note:"" ,active: false ,user: "" ,emergency:false ,Freq: { freq:'123.4'}},APR: {note:"" ,active: false ,user: "" ,emergency: false, Freq: {freq:'33.250'}}},rnw: 27 ,state: "Test" ,qnh: '29.92' ,metar: "TEST",misc: "-"},
   ])
 
   const tab = ref('stations')
@@ -20,6 +24,8 @@
       <v-tabs color="rgba(255,0,180,1)" v-model="tab">
         <v-tab value="stations"  class="tab">Manned Stations</v-tab>
         <v-tab value="search"  class="tab">Flight Search</v-tab>
+        <v-tab value="filer"  class="tab">File a flight</v-tab>
+        <v-tab value="station_settings"  class="tab">Station editor</v-tab>
         <!--<img class="header_fade_strip">-->
       </v-tabs>
   
@@ -30,7 +36,10 @@
           <station_view :apt_data="apt_data" :version="version" />
         </v-tabs-window-item>
         <v-tabs-window-item value="search">
-          <v-sheet class="pa-5" color="orange">Two</v-sheet>
+          <flt_view :version="version"/> 
+        </v-tabs-window-item>
+        <v-tabs-window-item value="filer">
+          <file_view :version="version"/>
         </v-tabs-window-item>
       </v-tabs-window>
     </v-sheet>    
