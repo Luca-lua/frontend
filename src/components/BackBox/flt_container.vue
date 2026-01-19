@@ -1,5 +1,6 @@
 <script setup>
     import VersionBar from "./VersionBar.vue";
+    import flt_list from "../flt_page/flt_list.vue"
 
     const props = defineProps({
         version: Number,
@@ -11,7 +12,7 @@
         <div class="flt_container">
             <VersionBar :version="version" page="Flight search"/>
             <div style="height: 60%;">
-
+                <flt_list/>
             </div>
         </div>
     </section>
