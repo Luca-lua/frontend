@@ -201,11 +201,11 @@
             <v-label class="Category"> Callsighn* </v-label>
         </div>
         <div class="HorizontalContainer">
-            <v-text-field variant="filled" :error="ErrorType" name="Alternate" type="text" class="input" v-model="Type" style="margin-left: 1%;" placeholder="1000"/>
-            <v-text-field variant="filled" :error="ErrorType" name="Alternate" type="text" class="input" v-model="Call" style="margin-left: 1%;" placeholder="1000"/>
+            <v-text-field variant="filled" :error="ErrorType" name="Alternate" type="text" class="input" v-model="Type" style="margin-left: 1%;" placeholder="EF-2000"/>
+            <v-text-field variant="filled" :error="ErrorCall" name="Alternate" type="text" class="input" v-model="Call" style="margin-left: 1%;" placeholder="Juliet 1-3"/>
         </div>
         <v-label class="Category"> Remarks </v-label>
-        <v-text-field variant="filled" name="Alternate" type="text" class="input" v-model="Remarks" style="margin-left: 1%;" placeholder="-"/>
+        <v-text-field variant="filled" name="Alternate" type="text" class="input" v-model="Remarks" style="margin-left: 1%;" placeholder="no remarks"/>
     </v-card>
     <v-card variant="outlined" class="FLTInfoBox">
         <div class="HorizontalContainer">

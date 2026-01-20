@@ -48,7 +48,6 @@ import { ref,reactive } from 'vue';
 
     function refreshFlights(event)
     {
-        alert("start");
         var data = new Object;
         if (checkNull(arrivalFilter))
         {
@@ -60,19 +59,19 @@ import { ref,reactive } from 'vue';
         }
         if (checkNull(departureBeforeFilter))
         {
-            data.departure_time_earlier_than = departureBeforeFilter.value;
+            data.departure_time_earlier_than = replaceTimeDate(departureBeforeFilter);
         }
         if (checkNull(departureAfterFilter))
         {
-            data.departure_time_later_than = departureAfterFilter.value;
+            data.departure_time_later_than = replaceTimeDate(departureAfterFilter);
         }
         if (checkNull(arrivalBeforeFilter))
         {
-            data.arrival_time_earlier_than = arrivalBeforeFilter.value;
+            data.arrival_time_earlier_than = replaceTimeDate(arrivalBeforeFilter);
         }
         if (checkNull(arrivalAfterFilter))
         {
-            data.arrival_time_later_than = arrivalAfterFilter.value;
+            data.arrival_time_later_than = replaceTimeDate(arrivalAfterFilter);
         }
         if (checkNull(remarkFilter))
         {
@@ -111,70 +110,94 @@ import { ref,reactive } from 'vue';
 <template>
     <v-card elevation="0" variant="outlined" class="FLTInfoBox">
         <v-card elevation="0" variant="outlined" class="FLTInfoBoxLayer2">
-            <v-label class="Category">Flights</v-label>
+            <v-label class="Category">Flight search</v-label>
             <button class="button" @click="refreshFlights">Refresh</button>
         </v-card> 
-        <v-card class="listContainer">
-            <div v-for="flight in flights" class="listPartContainer">
-                <v-label class="listEl1" style="width: 7%;">{{ flight.departure }}</v-label>
-                <v-label class="listEl2" style="width: 37%;">{{ flight.departure_time }}</v-label>
-                <v-label class="listEl1" style="width: 7%;">{{ flight.arrival }}</v-label>
-                <v-label class="listEl2" style="width: 24;">{{ flight.arrival_time }}</v-label>
-
-                <v-label class="listEl1">{{ flight.alternate }}</v-label>
-                <v-label class="listEl2">{{ flight.route }}</v-label>
-                <v-label class="listEl1">{{ flight.altitude }}</v-label>
-
-                <v-label class="listEl2">{{ flight.callsighn }}</v-label>
-                <v-label class="listEl1">{{ flight.squawk }}</v-label>
-                <v-label class="listEl2">{{ flight.type }}</v-label>
-                <v-label class="listEl1">{{ flight.user }}</v-label>
-
-                <v-label class="listEl2">{{ flight.ifr_flight }}</v-label>
-                <v-label class="listEl1">{{ flight.formation_flight }}</v-label>
-                <v-label class="listEl2">{{ flight.formation_elemnts}}</v-label>
-
-                <v-label class="listEl1">{{ flight.fuel_reserve }}</v-label>
-                <v-label class="listEl2">{{ flight.remarks}}</v-label>
-            </div>
-        </v-card>
+        <div class="HorizontalContainer">
+            <v-text-field v-model="departureFilter" label="Departure Airport" variant="filled" type="text" class="input" placeholder=""/>
+            <v-card style="border-left: 2px solid rgb(200, 0, 200); height: 100%; width: 5px;"></v-card>
+            <v-text-field v-model="arrivalFilter" label="Arrival Airport" variant="filled" type="text" class="input" placeholder=""/>
+            <v-card style="border-left: 2px solid rgb(200, 0, 200); height: 100%; width: 5px;"></v-card>
+            <v-text-field v-model="remarkFilter" label="Remarks" variant="filled" type="text" class="input" placeholder=""/>
+        </div>
+        <div class="HorizontalContainer">
+            <v-text-field v-model="departureAfterFilter" label="Departure min" variant="filled" type="datetime-local" class="input2" placeholder=""/>
+            <v-card style="border-left: 2px solid rgb(200, 0, 200); height: 100%; width: 10px;"></v-card>
+            <v-text-field v-model="departureBeforeFilter" label="Departure max" variant="filled" type="datetime-local" class="input2" placeholder=""/>
+            <v-card style="border-left: 2px solid rgb(200, 0, 200); height: 100%; width: 10px;"></v-card>
+            <v-text-field v-model="arrivalAfterFilter" label="Arrival min" variant="filled" type="datetime-local" class="input2" placeholder=""/>
+            <v-card style="border-left: 2px solid rgb(200, 0, 200); height: 100%; width: 10px;"></v-card>
+            <v-text-field v-model="arrivalBeforeFilter" label="Arrival min" variant="filled" type="datetime-local" class="input2" placeholder=""/>
+        </div>
+        <v-table hover="true" class="table">
+            <thead>
+                <tr class="listCategories">
+                    <th>Departure</th>
+                    <th>Departure Time</th>
+                    <th>Arrival</th>
+                    <th>Arrival Time</th>
+                    <th>Alternate</th>
+                    <th>Route</th>
+                    <th>Altitude</th>
+                    <th>Callsighn</th>
+                    <th>IFR-Flight</th>
+                    <th>Formation-flight</th>
+                    <th>Formation-elements</th>
+                    <th>Block-fuel</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="flight in flights" :key="flight.id">
+                    <td class="listEl1">{{ flight.departure }}</td>
+                    <td class="listEl2">{{ flight.departure_time }}</td>
+                    <td class="listEl1">{{ flight.arrival }}</td>
+                    <td class="listEl2">{{ flight.arrival_time }}</td>
+                    <td class="listEl1">{{ flight.alternate }}</td>
+                    <td class="listEl2">{{ flight.route }}</td>
+                    <td class="listEl1">{{ flight.altitude }}</td>
+                    <td class="listEl2">{{ flight.callsign }}</td>
+                    <td class="listEl1">{{ flight.ifr_flight }}</td>
+                    <td class="listEl2">{{ flight.formation_flight }}</td>
+                    <td class="listEl1">{{ flight.formation_elements }}</td>
+                    <td class="listEl2">{{ flight.fuel_reserve }}</td>
+                    <td class="listEl1">{{ flight.remarks }}</td>
+                </tr>
+            </tbody>
+        </v-table>
     </v-card>
 </template>
 
 <style scoped>
-    .listPartContainer {
-        width: 100%;
-        height: fit-content;
-        display: flex;
-        justify-content: space-around;
+    .table {
+        background: transparent;
+        border-collapse: collapse;
+        border: 1px solid black;
+        margin-bottom: 2%;
     }
-    .listContainer {
-        width: fit-content;
-        height: fit-content;
-        align-content: top;
-        margin: 2%;
-        padding-left: 2%;
-        padding-right: 2%;
-        color:rgb(200, 0, 200);
-        background-color: rgb(80, 80, 100);
-        overflow: scroll;
-        scroll-behavior: smooth;
+    .listCategories {
+        background-color: rgba(110,55,250,0.75);
+        outline: 2px solid black;
     }
     .listEl1 {
-        width: fill;
-        font-size: 50%;
+        width: max-content;
+        white-space: nowrap;
+        height: min-content;
+        font-size: 100%;
         padding-left: 1%;
+        background-color: transparent;
         padding-right: 1%;
         color: rgb(200, 100, 255);
-        background-color:  rgb(100, 00, 155);;
     }
     .listEl2 {
-        width: fill;
-        font-size: 50%;
+        width: max-content;
+        white-space: nowrap;
+        height: min-content;
+        font-size: 100%;
         padding-left: 1%;
+        background-color: transparent;
         padding-right: 1%;
-        color: rgb(100, 00, 155);
-        background-color: rgb(200, 100, 255);
+        color: rgb(150, 80, 255);
     }
     .button {
         font-size: 55%;
@@ -191,8 +214,10 @@ import { ref,reactive } from 'vue';
     .input {
         color: rgb(200, 100, 255);
         border-radius: 5%;
-        margin-left: 3%;
-        margin-right: 3%;
+    }
+    .input2 {
+        color: rgb(255, 30, 205);
+        border-radius: 5%;
     }
 
     .vertical {
@@ -217,8 +242,8 @@ import { ref,reactive } from 'vue';
     }
     .Category {
         color: rgb(200, 0, 200);;
-        font-size: 90%;
-        margin-left: 5%;
+        font-size: 120%;
+        margin-left: 0%;
         font-weight: bold;
         text-align: center;
     }
