@@ -20,7 +20,7 @@ import { Box } from 'vuetify/lib/util/box';
     
     <v-card variant="outlined" class="APTInfoBox">
         <v-card variant="outlined" v-for="(position,index) in positions" class="APTInfoBoxLayer2">
-            <v-label class="Category"> {{index}} &nbsp;
+            <v-label class="Category"> {{position.position}} &nbsp;
                 <span v-if="position.emergency" class="emergency"> ▇ </span>
                 <span v-else-if="position.active" class="active"> ▇ </span>
                 <span v-else="position.active" class="offline"> ▇ </span>
@@ -30,14 +30,14 @@ import { Box } from 'vuetify/lib/util/box';
                 <v-label class="Frequency"> {{ position.user }}</v-label>
             </div>
             <hr>
-            <div  v-for="(freq,name) in position.Freq" class="FrequencyContainer"> 
-                <v-label class="Label"> {{ name }} </v-label>
-                <v-label class="Frequency"> {{ freq }}</v-label>
+            <div  v-for="(freq,name) in position.freq" class="FrequencyContainer"> 
+                <v-label class="Label"> {{ freq.note }} </v-label>
+                <v-label class="Frequency"> {{ freq.frequency }}</v-label>
             </div>
             <hr>
             <div class="FrequencyContainer"> 
                 <v-label class="Label"> Remarks </v-label>
-                <v-label class="Frequency"> {{ position.note }}</v-label>
+                <v-label class="Frequency"> {{ misc }} </v-label>
             </div>
         </v-card>    
     </v-card>
@@ -124,12 +124,21 @@ import { Box } from 'vuetify/lib/util/box';
     .Label {
         color: rgb(80, 180, 185);;
         font-size: 25%;
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
     }
     .Frequency {
         color: rgb(120, 220, 225);;
         font-size: 35%;
-        margin-left: 7%;
-        text-align: left;
+        margin-left: 0%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 25%;
+        text-align: center;
     }
     .apt_icao_code {
         background-image: linear-gradient(to right,rgb(150, 150, 255),rgb(150, 250, 255));

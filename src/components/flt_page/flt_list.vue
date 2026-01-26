@@ -1,6 +1,6 @@
 <script setup>
     import { skipPartiallyEmittedExpressions } from 'typescript';
-import { ref,reactive } from 'vue';
+import { ref,reactive, onMounted } from 'vue';
 
     const flights = reactive(["Empty"]);
 
@@ -84,7 +84,6 @@ import { ref,reactive } from 'vue';
 
         const queryString = new URLSearchParams(data).toString();
         const url = `http://127.0.0.1:5000/get-flightplan?${queryString}`;
-        console.log(url);
         let response = fetch(url,{
             method: 'GET',
             mode: 'cors',
@@ -104,6 +103,9 @@ import { ref,reactive } from 'vue';
                 console.error("Fetch error:", err);
             });
     }
+    onMounted(()=>{
+        refreshFlights();
+    })
 </script>
 
 

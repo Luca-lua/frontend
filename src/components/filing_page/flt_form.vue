@@ -1,5 +1,5 @@
 <script setup>
-    import {reactive, ref} from 'vue';
+    import {onMounted, reactive, ref} from 'vue';
 
     const ButtonColor = ref("rgb(200, 50, 255)");
 
@@ -35,6 +35,62 @@
     const Flight_types_preset = reactive(['Formation-Flight','Solo-Flight']);
     const Flight_types_true = reactive([true,false]);
 
+    const apt_data = reactive({});
+
+    class apt {
+      constructor(id,code,name,stations,rnw,qnh,state,metar,misc) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.stations = stations;
+        this.rnw = rnw;
+        this.qnh = qnh;
+        this.state = state;
+        this.metar = metar;
+        this.misc = misc;
+      }
+    }
+
+    function getAptData()
+    {
+      const url = "http://127.0.0.1:5000/get-airportdata";
+      console.log(url)
+      let response = fetch(url,{
+        method: 'GET',
+        mode: 'cors',
+      });
+     response
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log(apt_data);
+        console.log("Server response:", data);
+        Object.values(data).map(a =>
+          apt_data[a.id] = new apt(
+            a.id,
+            a.code,
+            a.name,
+            a.stations,
+            a.rnw,
+            a.qnh,
+            a.state,
+            a.metar,
+            a.misc
+          )
+        );
+        console.log(apt_data);
+        apt_data.length = Object.keys(apt_data).length;
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+      });
+    console.log(apt_data)
+    } 
+
     const props = defineProps({
 
     })      
@@ -42,6 +98,7 @@
     function checkNull(Var,ErrorVar)
     {
         if (!Var.value) { 
+            ButtonColor.value = "rgb(255, 0, 0)";
             ErrorVar.value = true;
             return true;
         } else {
@@ -88,9 +145,34 @@
     function replaceNullNMB(Var)
     {
         if (!Var.value) { 
+            ButtonColor.value = "rgb(255, 0, 0)";
             return null;
         } else {
             return Var.value;
+        }
+    }
+
+    function checkDestination(destination,CustomError)
+    {
+        let exists = false;
+        console.log(Object.values(apt_data));
+        Object.values(apt_data).forEach(key=>{
+            console.log(key);
+            if (key.code == destination)
+            {
+                exists = true;
+            }
+        })
+        if (exists == false)
+        {
+            CustomError.value = true;
+            ButtonColor.value = "rgb(255, 0, 0)";
+            return true;
+        }
+        else
+        {
+            CustomError.value = false;
+            return false;
         }
     }
 
@@ -104,10 +186,12 @@
         if (checkNull(IFR,ErrorIFRFli)) {return 0;}
         if (checkNull(Call,ErrorCall)) {return 0;}
         if (checkNull(Type,ErrorType)) {return 0;}
+        if (checkDestination(Origin.value,ErrorOrigin)) {return 0;}
+        if (checkDestination(Destination.value,ErrorDestination)) {return 0;}
         var data = new Object();
         data.departure = Origin.value;
         data.arrival = Destination.value;
-        data.alternate = replaceNullSTR(Alternate);
+        data.alternate = Alternate.value;
         data.route = replaceNullSTR(Route);
         data.altitude = replaceNullNMB(Alt);
         data.formation_flight = stringToTrue(Formation.value,Flight_types_preset,Flight_types_true);
@@ -146,9 +230,11 @@
             .catch(err => {
                 console.error("Fetch error:", err);
                 ButtonColor.value = "rgb(255, 0, 0)";
-            });
-                
-    }
+            }); 
+        }
+    onMounted(()=>{
+        getAptData();
+    })
 </script>
 
 <template>
