@@ -4,6 +4,7 @@
 
     const props = defineProps({
         version: Number,
+        user: Text
     })
 </script>
 
@@ -12,7 +13,7 @@
         <div class="flt_container">
             <VersionBar :version="version" page="Flight filing"/>
             <div style="height: 60%;">
-                <FilingForm/>
+                <FilingForm :user="user"/>
             </div>
         </div>
     </section>

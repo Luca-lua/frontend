@@ -4,7 +4,6 @@
     const ButtonColor = ref("rgb(200, 50, 255)");
 
     const Origin = ref();
-    const User = ref();
     const Destination = ref();
     const Alternate = ref();
     const Route = ref();
@@ -36,6 +35,10 @@
     const Flight_types_true = reactive([true,false]);
 
     const apt_data = reactive({});
+
+    const props = defineProps({
+        user: Text
+    })
 
     class apt {
       constructor(id,code,name,stations,rnw,qnh,state,metar,misc) {
@@ -90,10 +93,6 @@
       });
     console.log(apt_data)
     } 
-
-    const props = defineProps({
-
-    })      
 
     function checkNull(Var,ErrorVar)
     {
@@ -178,10 +177,10 @@
 
     function filePlan(event)
     {
-        User.value = "Undefined";
+        const active_user = ref(props.user)
         if (checkNull(Origin,ErrorOrigin)) {return 0;}
         if (checkNull(Destination,ErrorDestination)) {return 0;}
-        if (checkNull(User,ErrorUsr)) {return 0;}
+        if (checkNull(active_user,ErrorUsr)) {return 0;}
         if (checkNull(Formation,ErrorFormFli)) {return 0;}
         if (checkNull(IFR,ErrorIFRFli)) {return 0;}
         if (checkNull(Call,ErrorCall)) {return 0;}
@@ -204,10 +203,10 @@
         data.squawk = replaceNullNMB(Squawk);
         data.fuel_reserve = replaceNullNMB(Fuel);
         data.remarks = replaceNullSTR(Remarks);
+        data.status = "";
 
-        var jsonString = JSON.stringify(data);
-
-        let response = fetch('http://127.0.0.1:5000/post-flightplan/' + User.value,{
+        var jsonString = JSON.stringify(data)
+        let response = fetch('http://127.0.0.1:5000/post-flightplan/' + active_user.value,{
             method: 'POST',
             mode: 'cors',
             body: jsonString,
@@ -243,29 +242,29 @@
             <v-card variant="outlined" class="FLTInfoBoxLayer2">
                 <v-label class="Category"> Origin* </v-label>
                 <hr>
-                <v-text-field variant="filled" :error="ErrorOrigin" name="Origin" type="text" class="input" v-model="Origin" placeholder="ETNL"/>
+                <v-text-field variant="filled" autocomplete="off" :error="ErrorOrigin" name="Origin" type="text" class="input" v-model="Origin" placeholder="ETNL"/>
             </v-card>
 
             <v-card variant="outlined" class="FLTInfoBoxLayer2">
                 <v-label class="Category"> Destination* </v-label>
                 <hr>
-                <v-text-field variant="filled" :error="ErrorDestination" name="Destination" type="text" class="input" v-model="Destination" placeholder="ETNW"/>
+                <v-text-field variant="filled" autocomplete="off" :error="ErrorDestination" name="Destination" type="text" class="input" v-model="Destination" placeholder="ETNW"/>
             </v-card>
 
             <v-card variant="outlined" class="FLTInfoBoxLayer2">
                 <v-label class="Category"> Alternate </v-label>
                 <hr>
-                <v-text-field variant="filled" name="Alternate" type="text" class="input" v-model="Alternate" placeholder="EDDK"/>
+                <v-text-field variant="filled" autocomplete="off" name="Alternate" type="text" class="input" v-model="Alternate" placeholder="EDDK"/>
             </v-card>
         </div>
         <v-card variant="outlined" class="FLTInfoBoxLayer2">
         <div class="HorizontalContainer"> 
             <v-label class="Category"> Route </v-label>
-            <v-text-field variant="filled" name="Alternate" type="text" class="input" v-model="Route" style="margin-left: 20%;" placeholder="DIR ETNW"/>
+            <v-text-field variant="filled" autocomplete="off" name="Alternate" type="text" class="input" v-model="Route" style="margin-left: 20%;" placeholder="DIR ETNW"/>
         </div>
         <div class="HorizontalContainer"> 
             <v-label class="Category"> Alt </v-label>
-            <v-text-field variant="filled" name="Alternate" type="number" class="input" v-model="Alt" style="margin-left: 25%;" placeholder="1000"/>
+            <v-text-field variant="filled" autocomplete="off" name="Alternate" type="number" class="input" v-model="Alt" style="margin-left: 25%;" placeholder="1000"/>
         </div>
         </v-card>
     </v-card>
@@ -274,12 +273,12 @@
             <v-card variant="outlined" class="FLTInfoBoxLayer2">
                 <v-label class="Category"> Departure Time </v-label>
                 <hr>
-                <v-text-field variant="filled" name="ArrTime" type="datetime-local" class="input" v-model="DepTime" placeholder="ETNL"/>
+                <v-text-field variant="filled" name="ArrTime" autocomplete="off" type="datetime-local" class="input" v-model="DepTime" placeholder="ETNL"/>
             </v-card>
             <v-card variant="outlined" class="FLTInfoBoxLayer2">
                 <v-label class="Category"> Arrival Time </v-label>
                 <hr>
-                <v-text-field variant="filled" name="ArrTime" type="datetime-local" class="input" v-model="ArrTime" placeholder="ETNL"/>
+                <v-text-field variant="filled" name="ArrTime" autocomplete="off" type="datetime-local" class="input" v-model="ArrTime" placeholder="ETNL"/>
             </v-card>
         </div>
         <div class="HorizontalContainer">
@@ -287,11 +286,11 @@
             <v-label class="Category"> Callsighn* </v-label>
         </div>
         <div class="HorizontalContainer">
-            <v-text-field variant="filled" :error="ErrorType" name="Alternate" type="text" class="input" v-model="Type" style="margin-left: 1%;" placeholder="EF-2000"/>
-            <v-text-field variant="filled" :error="ErrorCall" name="Alternate" type="text" class="input" v-model="Call" style="margin-left: 1%;" placeholder="Juliet 1-3"/>
+            <v-text-field variant="filled" :error="ErrorType" autocomplete="on" name="Alternate" type="text" class="input" v-model="Type" style="margin-left: 1%;" placeholder="EF-2000"/>
+            <v-text-field variant="filled" :error="ErrorCall" autocomplete="on" name="Alternate" type="text" class="input" v-model="Call" style="margin-left: 1%;" placeholder="Juliet 1-3"/>
         </div>
         <v-label class="Category"> Remarks </v-label>
-        <v-text-field variant="filled" name="Alternate" type="text" class="input" v-model="Remarks" style="margin-left: 1%;" placeholder="no remarks"/>
+        <v-text-field variant="filled" autocomplete="off" name="Alternate" type="text" class="input" v-model="Remarks" style="margin-left: 1%;" placeholder="no remarks"/>
     </v-card>
     <v-card variant="outlined" class="FLTInfoBox">
         <div class="HorizontalContainer">
@@ -299,9 +298,9 @@
             <v-autocomplete class="input" v-model="Formation" label="Flight type" style="width: 50%;" :items="Flight_types_preset"></v-autocomplete>
         </div>
         <div class="HorizontalContainer">
-            <v-text-field label="block-fuel" variant="filled" type="number" class="input" v-model="Fuel" style="width: 50%;" placeholder="1000"/>
-            <v-text-field v-if="Formation == 'Formation-Flight'" v-model="Formation_elements" label="flight-elements" variant="filled" type="number" class="input" style="width: 50%;" placeholder="1"/>
-            <v-text-field v-else disabled="true"  label="flight-elements" variant="filled" type="number" class="input" v-model="Call" style="width: 50%;" placeholder="1"/>
+            <v-text-field label="block-fuel" autocomplete="off" variant="filled" type="number" class="input" v-model="Fuel" style="width: 50%;" placeholder="1000"/>
+            <v-text-field v-if="Formation == 'Formation-Flight'" autocomplete="off" v-model="Formation_elements" label="flight-elements" variant="filled" type="number" class="input" style="width: 50%;" placeholder="1"/>
+            <v-text-field v-else disabled="true" autocomplete="off"  label="flight-elements" variant="filled" type="number" class="input" v-model="Call" style="width: 50%;" placeholder="1"/>
         </div>
         <button class="button" @click="filePlan" :style="{color: ButtonColor}"> Submit</button>
     </v-card>

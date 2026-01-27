@@ -1,6 +1,5 @@
 <script setup>
-    import { skipPartiallyEmittedExpressions } from 'typescript';
-import { ref,reactive, onMounted } from 'vue';
+    import { ref,reactive, onMounted } from 'vue';
 
     const flights = reactive(["Empty"]);
 
@@ -12,6 +11,10 @@ import { ref,reactive, onMounted } from 'vue';
     const arrivalAfterFilter = ref();
     const remarkFilter = ref();
     
+    function editEntry(id)
+    {
+        console.log(id)
+    }
     function boolToString(boolean,truestring,falsestring)
     {
         if(boolean == 1)
@@ -96,6 +99,7 @@ import { ref,reactive, onMounted } from 'vue';
 
         const queryString = new URLSearchParams(data).toString();
         const url = `http://127.0.0.1:5000/get-flightplan?${queryString}`;
+        console.log(url)
         let response = fetch(url,{
             method: 'GET',
             mode: 'cors',
@@ -124,7 +128,7 @@ import { ref,reactive, onMounted } from 'vue';
 <template>
     <v-card elevation="0" variant="outlined" class="FLTInfoBox">
         <v-card elevation="0" variant="outlined" class="FLTInfoBoxLayer2">
-            <v-label class="Category">Flight search</v-label>
+            <v-label class="Category">HL ATC overview </v-label>
             <button class="button" @click="refreshFlights">Refresh</button>
         </v-card> 
         <div class="HorizontalContainer">
@@ -146,6 +150,7 @@ import { ref,reactive, onMounted } from 'vue';
         <v-table hover="true" class="table">
             <thead>
                 <tr class="listCategories">
+                    <th>Id</th>
                     <th>Departure</th>
                     <th>Departure Time</th>
                     <th>Arrival</th>
@@ -160,10 +165,13 @@ import { ref,reactive, onMounted } from 'vue';
                     <th>Formation-elements</th>
                     <th>Block-fuel</th>
                     <th>Remarks</th>
+                    <th>status</th>
+                    <th>edit</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="flight in flights" :key="flight.id">
+                    <td class="listEl2">{{ flight.id }}</td>
                     <td class="listEl1">{{ flight.departure }}</td>
                     <td class="listEl2">{{ flight.departure_time }}</td>
                     <td class="listEl1">{{ flight.arrival }}</td>
@@ -178,6 +186,8 @@ import { ref,reactive, onMounted } from 'vue';
                     <td class="listEl2">{{ flight.formation_elements }}</td>
                     <td class="listEl1">{{ flight.fuel_reserve }}</td>
                     <td class="listEl2">{{ flight.remarks }}</td>
+                    <td class="listEl1">{{ flight.status }}</td>
+                    <button v-on:click="editEntry(flight.id)" class="editButton">Edit</button>
                 </tr>
             </tbody>
         </v-table>
@@ -214,6 +224,15 @@ import { ref,reactive, onMounted } from 'vue';
         background-color: transparent;
         padding-right: 1%;
         color: rgb(150, 80, 255);
+    }
+    .editButton {
+        background-color: rgb(100,100,155);
+        padding: 15%;
+        display: flex;
+        vertical-align:middle;
+        border-radius: 15%;
+        font-size: 125%;
+        color: rgb(30,25,75);
     }
     .button {
         font-size: 55%;
@@ -292,13 +311,13 @@ import { ref,reactive, onMounted } from 'vue';
     }
 
     .FLTInfoBox {
-        background-color: rgb(100,0,200);
-        margin: 2vh;
+        background-color: rgb(100,0,255);
+        margin: 0vh;
         height:fit-content;
         margin-top: 2vh;
         padding-left: 2%;
         padding-right: 2%;
-        color:rgb(200, 0, 200);
+        color:rgb(100, 0, 255);
         font-size: 3vw;
         background-image: repeating-linear-gradient(45deg,rgb(60, 60, 80),rgb(80, 80, 100));
     }
