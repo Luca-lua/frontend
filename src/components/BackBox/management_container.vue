@@ -1,4 +1,5 @@
 <script setup>
+    import editrowPage from "./edit_single_flight_management.vue"
     import { ref,reactive, onMounted } from 'vue';
 
     const flights = reactive(["Empty"]);
@@ -10,10 +11,15 @@
     const arrivalBeforeFilter = ref();
     const arrivalAfterFilter = ref();
     const remarkFilter = ref();
+
+    const editPage = ref(false);
+    const edit_id = reactive();
     
     function editEntry(id)
     {
-        console.log(id)
+        editPage.value = true;
+        edit_id.value = id;
+        // -> link to one row page -> edit api call
     }
     function boolToString(boolean,truestring,falsestring)
     {
@@ -126,7 +132,18 @@
 
 
 <template>
-    <v-card elevation="0" variant="outlined" class="FLTInfoBox">
+    <editrow-page v-if="!editPage" :id="id"></editrow-page>
+    <v-card elevation="0" v-if="editPage" variant="outlined" class="FLTInfoBox">
+        <v-card elevation="0" variant="outlined" class="FLTInfoBoxLayer2">
+            <v-label class="Category">Edit Flightplan </v-label>
+        </v-card> 
+        <div v-for="flt in flights">
+            <v-card class="FLTInfoBoxLayer2" v-if="flt.id==edit_id">
+                <v-text-field v-model="departureFilter" autocomplete="off" label="Departure Airport" variant="filled" type="text" class="input" placeholder=""/>
+            </v-card>
+        </div>
+    </v-card>
+    <v-card elevation="0" v-if="!editPage" variant="outlined" class="FLTInfoBox">
         <v-card elevation="0" variant="outlined" class="FLTInfoBoxLayer2">
             <v-label class="Category">HL ATC overview </v-label>
             <button class="button" @click="refreshFlights">Refresh</button>
